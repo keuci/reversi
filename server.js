@@ -1,5 +1,5 @@
 /* include the static file webserver library */
-var static = require( 'node - static');
+var static = require('node - static');
 
 /* include the http server library */
 var http = require('http');
@@ -12,7 +12,7 @@ var directory =__dirname +'/public';
 and we know that because port won't be set */
 if(typeof port == 'undefined' || !port) {
   directory = './public';
-  port = 8080
+  port = 8080;
 }
 /* Set up a static web-server that will deliver files from the filesystem */
 var file = new static.Server (directory);
@@ -22,7 +22,7 @@ var app = http.createServer(
   function(request,response){
     request.addListener( 'end',
     function (){
-      file.server(request,response);
+      file.serve(request,response);
     }
     ).resume();
   }
