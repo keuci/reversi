@@ -24,17 +24,17 @@ var file = new static.Server(directory);
 /* Construct an http server that get files from the file server */
 var app = http.createServer(
 	function(request,response) {
-		request.addListener('end',
-			function() {
-				file.serve(request,response);
-			}
+	request.addListener('end',
+	function() {
+	file.serve(request,response);
+	}
 		).resume();
 	}
 	).listen(port);
 
 console.log('The Server is running');
 
-/********************************/
+/***********************************/
 /*  Set up the static file server */
 
 var io = require('socket.io').listen(app);
@@ -54,3 +54,4 @@ io.sockets.on('connection', function(socket){
 	socket.on('disconnect', function(socket){
 		log('A web site disconnected from the server');
 	});
+		});
