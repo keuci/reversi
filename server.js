@@ -1,5 +1,5 @@
 /* include the static file webserver library */
-var static = require('node - static');
+var static = require('node-static');
 
 /* include the http server library */
 var http = require('http');
