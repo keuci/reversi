@@ -47,9 +47,8 @@ io.sockets.on('connection', function(socket) {
     socket.emit('log', array);
     socket.broadcast.emit('log', array);
     }
-    socket.on('connection', function(socket){
     log('A website connected to the server');
-});
+
     socket.on('disconnect', function(socket){
         log('A website disconnected from server');
     });
