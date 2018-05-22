@@ -37,18 +37,19 @@ console.log  ('The server is running');
 
 var io = require('socket.io').listen(app);
 
-io.sockets.on('connection', function(socket){
+io.sockets.on('connection', function(socket) {
     function log(){
-    var array = ['*** Server log message: '];
-    for (var i = 0; i < arguments.length;i++) {
+    var array = ['*** Server Log Message: '];
+    for (var i = 0; i < arguments.length; i++){
     array.push(arguments[i]);
     console.log(arguments[i]);
     }
     socket.emit('log', array);
     socket.broadcast.emit('log', array);
     }
-
-    log('A website connected to server');
+    socket.on('connection', function(socket){
+    log('A website connected to the server');
+});
 
     socket.on('disconnect', function(socket){
         log('A website disconnected from server');
