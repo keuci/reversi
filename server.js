@@ -1,3 +1,8 @@
+/**********/
+/* Set up the static file server*/
+
+
+
 /* include the static file webserver library */
 var static = require('node-static');
 
@@ -10,7 +15,7 @@ var directory =__dirname +'/public';
 
 /* if we aren't on Heroku, then we need to readjust the port and directory information
 and we know that because port won't be set */
-if(typeof port == 'undefined' || !port) {
+if(typeof port == 'undefined' || !port){
   directory = './public';
   port = 8080;
 }
@@ -28,3 +33,27 @@ var app = http.createServer(
   }
 ).listen(port);
 console.log  ('The server is running');
+
+/**********/
+/* Set up the web socket server*/
+
+var io = require('socket.io').listen(app);
+
+io.sockets.on('connection', functions){
+
+  function log(){
+    var array = ['*** Server Log Message: '];
+    for(var i = 0; i <arguments.length; i++){
+      array.push(arguments[i]);
+    }
+socket.emit('log', array);
+socket.broadcast.emit('log',array);
+}
+socket.on('connection',function(socket){
+  log('A web site connected to the server');
+
+}
+socket.on('disconnection',function(socket){
+  log('A web site disconnected to the server');
+}
+});
