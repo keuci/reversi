@@ -4,7 +4,7 @@
   "description": "This is the game of reversi",
   "main": "server.js",
   "dependencies": {
-    "node": "^10.1.0",
+    "node": "^10.2.0",
     "node-static": "^0.7.10",
     "socket.io": "^2.0.1"
   },
