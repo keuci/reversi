@@ -66,7 +66,7 @@ if(dom_elements.length == 0) {
 		nodeB.append('<h4>'+payload.username+'<h4>');
 
 		nodeC.addClass('cold-3 text-left');
-		var buttonC = makeInviteButton(payload.socket_id);
+		var buttonC = makeInviteButton();
 		nodeC.append(buttonC);
 
 		nodeA.hide();
@@ -80,13 +80,12 @@ if(dom_elements.length == 0) {
 
 	}
 	else{
-		var buttonC = makeInviteButton(payload.socket_id);
+		var buttonC = makeInviteButton();
 		$('.socket_'+payload.socket_id+' button ').replaceWith(buttonC);
 		dom_elements.slideDown(1000);
 }
 
  /* Manage the message that a new player has joined */
-
 	var newHTML = '<p>'+payload.username+' just entered the lobby</p>');
 	var newNode = $(newHTML);
 	newNode.hide();
@@ -104,7 +103,7 @@ socket.on('player_disconnected', function(payload){
 		return;
 	}
 
-	/* If we are being notified that we left the room, then ignore it */
+/* If we are being notified that we left the room, then ignore it */
 if (payload.socket_id == socket.id){
 	return;
 	}
@@ -113,14 +112,12 @@ if (payload.socket_id == socket.id){
 var dom_elements = $('.socket_'+payload.socket_id);
 
 /* If something exists */
-
-if(dom_elements.length != 0){
+if(dom_elements.length === 0) {
 	dom_elements.slideUp(1000);
 	}
 
  /* Manage the message that a new player has left */
-
-	var newHTML = '<p>'+payload.username+' just entered the lobby</p>');
+	var newHTML = '<p>'+payload.username+' just left the lobby</p>');
 	var newNode = $(newHTML);
 	newNode.hide();
 	$('#messages').append(newNode);
@@ -148,8 +145,6 @@ function makeInviteButton(socket_id) {
 	var newHTML = '<button type=\'button\' class=\'btn btn-outline-primary\'>Invite</button>';
 	var newNode = $(newHTML);
 	newNode.click(function(){
-		invite(socket_id);
-	});
 	return(newNode);
 
 }

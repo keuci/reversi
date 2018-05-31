@@ -116,7 +116,7 @@ var username = payload.username;
 	socket.emit('join_room_response', {
 		result: 'fail',
 		message: error_message
-							});
+});
 			return;
 	}
 
@@ -126,7 +126,7 @@ var username = payload.username;
 	players[socket.id].room = room;
 
 
-	/* Actually have user join the room */
+/* Actually have user join the room */
 socket.join(room);
 
 /* Get the room object */
@@ -144,8 +144,6 @@ var success_data = {
 
 io.in(room).emit('join_room_response', success_data);
 
-
-
 for (var socket_in_room in roomObject.sockets) {
 var success_data = {
 		result: 'success',
@@ -159,10 +157,26 @@ socket.emit('join_room_response', success_data);
 
 log('join_room success');
 
-if (room !== 'lobby'){
-	send_game_update(socket,room, 'initial update');
-			}
 });
+
+/* Leave Room */
+socket.on('disconnect', function(){
+
+log('client disconnected '+JSON.stringify(players[socket.id]));
+
+if ('undefined' !== typeof players[socket.id] && players[socket.id]) {
+	var username = players[socket.id].username;
+	var room = players[socket.id].room;
+	var payload = {
+			username: username,
+			socket_id: socket.id
+};
+			delete players[socket.id];
+			io.in(room).emit('player_disconnected', payload);
+		}
+
+	});
+
 
 /* Tells the person who is joining who else is in the room */
 socket.on('disconnect', function(){
@@ -225,7 +239,7 @@ socket.emit('send_message_response', {
 return;
 	}
 
-var username = players[socket.id].username;
+var username = payload.username;
 		if (('undefined' === typeof username) || !username) {
 			var error_message = 'send_message didn\'t specify a username, command aborted';
 			log(error_message);
@@ -358,4 +372,4 @@ var success_data = {
 		log('invite successful');
 	});
 
-	
+	});
