@@ -66,7 +66,7 @@ if(dom_elements.length == 0) {
 		nodeB.append('<h4>'+payload.username+'<h4>');
 
 		nodeC.addClass('cold-3 text-left');
-		var buttonC = makeInviteButton();
+		var buttonC = makeInviteButton(payload.socket_id);
 		nodeC.append(buttonC);
 
 		nodeA.hide();
@@ -80,7 +80,7 @@ if(dom_elements.length == 0) {
 
 	}
 	else{
-		var buttonC = makeInviteButton();
+		var buttonC = makeInviteButton(payload.socket_id);
 		$('.socket_'+payload.socket_id+' button ').replaceWith(buttonC);
 		dom_elements.slideDown(1000);
 }
