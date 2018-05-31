@@ -127,40 +127,6 @@ if(dom_elements.length != 0){
 	newNode.slideDown(1000);
 });
 
-/* invite someone */
-
-function invite(who) {
-	var payload = {};
-	payload.requested_user = who;
-
-	console.log('*** Client Log Message: "invite" payload: '+JSON.stringify(payload));
-	socket.emit('invite', payload);
-}
-
-/* invite_response */
-
-socket.on('invite_response', function(payload){
-	if (payload.result === 'fail'){
-		alert(payload.message);
-		return;
-	}
-	var newNode = makeInvitedButton();
-	$('.socket_'+payload.socket_id+' button').replaceWith(newNode);
-});
-
-/* invited */
-
-socket.on('invited', function(payload){
-	if (payload.result === 'fail'){
-		alert(payload.message);
-		return;
-	}
-	var newNode = makePlayButton();
-	$('.socket_'+payload.socket_id+' button').replaceWith(newNode);
-});
-
-/* send message response */
-
 socket.on('send_message_response', function(payload){
 	if (payload.result == 'fail'){
 		alert(payload.message);
@@ -168,8 +134,6 @@ socket.on('send_message_response', function(payload){
 	}
 	$('#messages').append('<p><b>'+payload.username+' says:</b> '+payload.message+'</p>');
 });
-
-/* setting up message with variable content */
 
 function send_message(){
 	var payload = {};
@@ -180,42 +144,12 @@ function send_message(){
 	socket.emit('send_message', payload);
 }
 
-/* make invite button */
-
 function makeInviteButton(socket_id) {
 	var newHTML = '<button type=\'button\' class=\'btn btn-outline-primary\'>Invite</button>';
 	var newNode = $(newHTML);
 	newNode.click(function(){
 		invite(socket_id);
 	});
-	return(newNode);
-
-}
-
-/* make invited button */
-function makeInvitedButton() {
-
-	var newHTML = '<button type=\'button\' class=\'btn btn-primary\'>Invited</button>';
-	var newNode = $(newHTML);
-	return(newNode);
-
-}
-
-/* make play button */
-
-function makePlayButton() {
-
-	var newHTML = '<button type=\'button\' class=\'btn btn-success\'>Play</button>';
-	var newNode = $(newHTML);
-	return(newNode);
-
-}
-
-/* make engage button */
-function makeEngageButton() {
-
-	var newHTML = '<button type=\'button\' class=\'btn btn-danger\'>Engaged</button>';
-	var newNode = $(newHTML);
 	return(newNode);
 
 }
