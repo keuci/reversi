@@ -82,7 +82,7 @@ function log(){
 
 		log('\'join_room\' command'+JSON.stringify(payload));
 
-	/*	Check client sent payload */
+/*Check client sent payload */
 
 if(('undefined' === typeof payload) || !payload){
 		var error_message = 'join_room had no payload, command aborted';
@@ -118,7 +118,7 @@ var username = payload.username;
 			return;
 	}
 
-	/* Store info about new player */
+/* Store info about new player */
 	players[socket.id] = {};
 	players[socket.id].username = username;
 	players[socket.id].room = room;
@@ -176,6 +176,23 @@ if ('undefined' !== typeof players[socket.id] && players[socket.id]) {
 	});
 
 /* Send_message Command */
+/* payload:
+	{
+	 	'room': room to join,
+	 	'username' : username of person sending the message,
+	 	'message' : the message to send
+	}
+	send_message_response: {
+		'result': 'success',
+		'username' : username of the person that spoke,
+		'message' : the message spoken
+	}
+	or {
+		'result': 'fail',
+		'message' : failure message
+	}
+	*/
+
 socket.on('send_message', function(payload){
 	log('server received a command', 'send_message', payload);
 	if(('undefined' === typeof payload) || !payload){
@@ -185,7 +202,7 @@ socket.on('send_message', function(payload){
 socket.emit('send_message_response', {
 	result:'fail',
 	message: error_message
-				});
+});
 return;
 	}
 
@@ -195,8 +212,8 @@ var room = payload.room;
 	log(error_message);
 
 socket.emit('send_message_response', {
-		result: 'fail',
-		message: error_message
+	result: 'fail',
+	message: error_message
 });
 return;
 	}
@@ -205,9 +222,10 @@ var username = payload.username;
 	if (('undefined' === typeof username) || !username) {
 	var error_message = 'send_message didn\'t specify a username, command aborted';
 	log(error_message);
-			socket.emit('send_message_response', {
-			result: 'fail',
-			message: error_message
+
+socket.emit('send_message_response', {
+	result: 'fail',
+	message: error_message
 });
 return;
 	}
@@ -216,10 +234,11 @@ var message = payload.message;
 if (('undefined' === typeof message) || !message) {
 
 var error_message = 'send_message didn\'t specify a username, command aborted';
-		log(error_message);
-		socket.emit('send_message_response', {
-		result: 'fail',
-		message: error_message
+	log(error_message);
+
+socket.emit('send_message_response', {
+	result: 'fail',
+	message: error_message
 });
 
 return;
@@ -231,16 +250,38 @@ var success_data = 	{
 		message: message
 };
 
-io.in(room).emit('send_message_response', success_data);
-		log('Message sent to room ' + room + ' by ' + username);
+io.sockets.in(room).emit('send_message_response', success_data);
+	log('Message sent to room ' + room + ' by ' + username);
 });
 
 /* Invite Command */
-/* Payload */
+/* Payload:
+
+:
+	{
+	 	'requested_user': the socket id of the person to be invited
+	}
+	invite_response: {
+		'result': 'success',
+		'socket_id' : the socket id of the person being invited
+	}
+	or {
+		'result': 'fail',
+		'message' : failure message
+	}
+	invited: {
+		'result': 'success',
+		'socket_id' : the socket id of the person being invited
+	}
+	or {
+		'result': 'success',
+		'socket_id' : failure message
+	}
+	*/
 
 
 socket.on('invite', function(payload){
-				log('invite with ' + JSON.stringify(payload));
+		log('invite with ' + JSON.stringify(payload));
 
 /* Check to make sure payload was sent */
 if(('undefined' === typeof payload) || !payload){
@@ -255,12 +296,12 @@ var error_message = 'invite had no payload, command aborted';
 
 /* Check that message can be traced to username */
 var username = players[socket.id].username;
-		if (('undefined' === typeof username) || !username) {
-			var error_message = 'invite can\'t identify who sent the message.';
-			log(error_message);
-			socket.emit('invite_response', {
-				result: 'fail',
-				message: error_message
+if (('undefined' === typeof username) || !username) {
+var error_message = 'invite can\'t identify who sent the message.';
+	log(error_message);
+	socket.emit('invite_response', {
+			result: 'fail',
+			message: error_message
 			});
 			return;
 		}
@@ -296,18 +337,17 @@ var success_data = {
 			result: 'success',
 			socket_id: requested_user
 };
-		socket.emit('invite_response', success_data);
+socket.emit('invite_response', success_data);
 
 /* Tell the invitee that they have been invited */
 var success_data = {
-			result: 'success',
-			socket_id: socket.id
+		result: 'success',
+		socket_id: socket.id
 };
-		socket.to(requested_user).emit('invited', success_data);
+socket.to(requested_user).emit('invited', success_data);
 
-		log('invite successful');
+log('invite successful');
 });
-
 
 
 });

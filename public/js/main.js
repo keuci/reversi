@@ -63,7 +63,7 @@ if(dom_elements.length == 0) {
 		nodeA.addClass('w-100');
 
 		nodeB.addClass('col-9 text-right');
-		nodeB.append('<h4>'+payload.username+'<h4>');
+		nodeB.append('<h4>'+payload.username+'</h4>');
 
 		nodeC.addClass('cold-3 text-left');
 		var buttonC = makeInviteButton();
@@ -78,11 +78,11 @@ if(dom_elements.length == 0) {
 		nodeB.slideDown(1000);
 		nodeC.slideDown(1000);
 
-	}
-	else{
-		var buttonC = makeInviteButton();
-		$('.socket_'+payload.socket_id+' button ').replaceWith(buttonC);
-		dom_elements.slideDown(1000);
+}
+else {
+	var buttonC = makeInviteButton();
+	$('.socket_'+payload.socket_id+' button ').replaceWith(buttonC);
+	dom_elements.slideDown(1000);
 }
 
  /* Manage the message that a new player has joined */
@@ -96,20 +96,19 @@ if(dom_elements.length == 0) {
 
 /* What to do when the server says that someone has left a room */
 socket.on('player_disconnected', function(payload){
-	console.log('*** Client Log Message: "disconnected" payload: '+JSON.stringify(payload));
 
-	if (payload.result == 'fail'){
+	if (payload.result === 'fail'){
 		alert(payload.message);
 		return;
 	}
 
 /* If we are being notified that we left the room, then ignore it */
-if (payload.socket_id == socket.id){
+if (payload.socket_id === socket.id){
 	return;
 	}
 
 /* If someone left the room then animate out all of their content */
-var dom_elements = $('.socket_'+payload.socket_id);
+var dom_element = $('.socket_'+payload.socket_id);
 
 /* If something exists */
 if(dom_elements.length === 0) {
@@ -117,7 +116,7 @@ if(dom_elements.length === 0) {
 	}
 
  /* Manage the message that a new player has left */
-	var newHTML = '<p>'+payload.username+' just left the lobby</p>');
+	var newHTML = '<p>'+payload.username+' has left the lobby</p>';
 	var newNode = $(newHTML);
 	newNode.hide();
 	$('#messages').append(newNode);
@@ -141,10 +140,9 @@ function send_message(){
 	socket.emit('send_message', payload);
 }
 
-function makeInviteButton(socket_id) {
-	var newHTML = '<button type=\'button\' class=\'btn btn-outline-primary\'>Invite</button>';
+function makeInviteButton() {=
+	var newHTML = '<button type="button" class="btn btn-outline-primary">Invite</button>';
 	var newNode = $(newHTML);
-	newNode.click(function(){
 	return(newNode);
 
 }
