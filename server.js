@@ -80,7 +80,7 @@ socket.on('join_room', function(payload){
 		log('\'join_room\' command'+JSON.stringify(payload));
 
 
-/*Check client sent payload */
+/* Check client sent payload */
 if(('undefined' === typeof payload) || !payload){
 	var error_message = 'join_room had no payload, command aborted';
 	log(error_message);
@@ -382,8 +382,12 @@ var success_data = {
 	socket_id: socket.id
 };
 socket.to(requested_user).emit('uninvited', success_data);
+
 log('uninvite successful');
 });
+
+socket.on('game_start', function(payload){
+		log('game_start with ' + JSON.stringify(payload));
 
 if(('undefined' === typeof payload) || !payload){
 	var error_message = 'game_start had no payload, command aborted';
@@ -429,6 +433,7 @@ if (!roomObject.sockets.hasOwnProperty(requested_user)) {
 });
 	return;
 }
+
 var game_id = Math.floor(1+Math.random() * 0x1000.toString(16).substring());
 
 var success_data = {
@@ -438,45 +443,12 @@ var success_data = {
 };
 socket.emit('game_start_response', success_data);
 
+var success_data = {
+	result: 'success',
+	socket_id: socket.id,
+	game_id: game_id
+};
 
-
-/* Invite Command */
-/* Payload:
-	{
-	 	'requested_user': the socket id of the person to be invited
-	}
-	invite_response: {
-		'result': 'success',
-		'socket_id' : the socket id of the person being invited
-	}
-	or {
-		'result': 'fail',
-		'message' : failure message
-	}
-	invited: {
-		'result': 'success',
-		'socket_id' : the socket id of the person being invited
-	}
-	or {
-		'result': 'success',
-		'socket_id' : failure message
-	}
-	*/
-
-socket.on('invite', function(payload){
-	log('invite with ' + JSON.stringify(payload));
-
-/* Check to make sure payload was sent */
-if(('undefined' === typeof payload) || !payload){
-	var error_message = 'invite had no payload, command aborted';
-	log(error_message);
-
-socket.emit('invite_response', {
-	result:'fail',
-	message: error_message
-});
-	return;
-}
-
-
+socket.to(requested_user).emit('game_start_response', success_data);
+log('game_start successful');
 });
