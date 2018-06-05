@@ -156,10 +156,12 @@ socket.emit('join_room_response', success_data);
 
 log('join_room success');
 
+if (room !== 'lobby'){
+			send_game_update(socket,room, 'initial update');
+}
 });
 
 
-/* Leave Room */
 socket.on('disconnect', function(){
 
 log('client disconnected '+JSON.stringify(players[socket.id]));
@@ -220,7 +222,7 @@ socket.emit('send_message_response', {
 	return;
 }
 
-	var username = payload.username;
+var username = players[socket.id].username;
 	if (('undefined' === typeof username) || !username) {
 	var error_message = 'send_message didn\'t specify a username, command aborted';
 	log(error_message);
@@ -231,28 +233,26 @@ socket.emit('send_message_response', {
 });
 		return;
 }
-
-	var message = payload.message;
+var message = payload.message;
 	if (('undefined' === typeof message) || !message) {
-	var error_message = 'send_message didn\'t specify a username, command aborted';
-	log(error_message);
-
-socket.emit('send_message_response', {
-	result: 'fail',
-	message: error_message
+		var error_message = 'send_message didn\'t specify a message, command aborted';
+		log(error_message);
+		socket.emit('send_message_response', {
+			result: 'fail',
+			message: error_message
 });
-		return;
+return;
 }
 
-	var success_data = {
-	result: 'Success',
+var success_data = 	{
+	result: 'success',
+	room: room,
 	username: username,
 	message: message
 };
-
-io.sockets.in(room).emit('send_message_response', success_data);
-	log('Message sent to room ' + room + ' by ' + username);
-		});
+		io.in(room).emit('send_message_response', success_data);
+		log('Message sent to room ' + room + ' by ' + username+ 'success_data' +JSON.stringify(success_data));
+	});
 
 /* Invite Command */
 /* Payload:
@@ -304,20 +304,8 @@ socket.emit('invite_response', {
 	return;
 		}
 
-var requested_user = payload.requested_user;
-	if (('undefined' === typeof requested_user) || !requested_user) {
-	var error_message = 'invite didn\'t specify a requested_user, command aborted';
-	log(error_message);
-
-socket.emit('invite_response', {
-		result: 'fail',
-		message: error_message
-});
-	return;
-		}
-		var room = players[socket.id].room;
-		var roomObject = io.sockets.adapter.rooms[room];
-
+var room = players[socket.id].room;
+var roomObject = io.sockets.adapter.rooms[room];
 
 /* Make sure user being invited is in the room */
 if (!roomObject.sockets.hasOwnProperty(requested_user)) {
@@ -347,8 +335,5 @@ var success_data = {
 socket.to(requested_user).emit('invited', success_data);
 
 log('invite successful');
-
-});
-
 
 });
