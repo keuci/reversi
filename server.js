@@ -47,15 +47,15 @@ io.sockets.on('connection', function(socket){
 
 	log('Client connection by ' + socket.id);
 
-	function log(){
-		var array = ['*** Server Log Message: '];
-		for (var i=0; i < arguments.length; i++){
-			array.push(arguments[i]);
-			console.log(arguments[i]);
+function log(){
+	var array = ['*** Server Log Message: '];
+	for (var i=0; i < arguments.length; i++){
+		array.push(arguments[i]);
+		console.log(arguments[i]);
 }
-			socket.emit('log', array);
-			socket.broadcast.emit('log', array);
-	}
+		socket.emit('log', array);
+		socket.broadcast.emit('log', array);
+}
 
 	/* join_room command */
 		/* payload:
@@ -107,24 +107,12 @@ var room = payload.room;
 var username = payload.username;
 	if (('undefined' === typeof username) || !username) {
 	var error_message = 'join_room didn\'t specify a username, command aborted';
-		log(error_message);
-		socket.emit('join_room_response', {
+	log(error_message);
+	socket.emit('join_room_response', {
 			result: 'fail',
 			message: error_message
 });
 	return;
-}
-
-var username = payload.username;
-	if (('undefined' === typeof username) || !username) {
-	var error_message = 'send_message didn\'t specify a username, command aborted';
-	log(error_message);
-
-socket.emit('send_message_response', {
-	result: 'fail',
-	message: error_message
-});
-		return;
 }
 
 /* Store info about new player */
@@ -162,6 +150,10 @@ socket.emit('join_room_response', success_data);
 }
 
 log('join_room success');
+
+if (room !== 'lobby') {
+	send_game_update(socket, room, 'initial update');
+}
 
 });
 
@@ -283,7 +275,7 @@ socket.emit('invite_response', {
 	message: error_message
 });
 	return;
-		}
+}
 
 var requested_user = payload.requested_user;
 	if (('undefined' === typeof requested_user) || !requested_user) {
@@ -291,14 +283,14 @@ var requested_user = payload.requested_user;
 	log(error_message);
 
 socket.emit('invite_response', {
-		result: 'fail',
-		message: error_message
+	result: 'fail',
+	message: error_message
 });
 	return;
 }
 
-		var room = players[socket.id].room;
-		var roomObject = io.sockets.adapter.rooms[room];
+var room = players[socket.id].room;
+var roomObject = io.sockets.adapter.rooms[room];
 
 
 /* Make sure user being invited is in the room */
@@ -389,9 +381,19 @@ var success_data = {
 	result: 'success',
 	socket_id: socket.id
 };
-	socket.to(requested_user).emit('uninvited', success_data);
-	log('uninvite successful');
+socket.to(requested_user).emit('uninvited', success_data);
+log('uninvite successful');
 });
+
+if(('undefined' === typeof payload) || !payload){
+	var error_message = 'game_start had no payload, command aborted';
+	log(error_message);
+	socket.emit('game_start_response', {
+	result:'fail',
+	message: error_message
+});
+	return;
+}
 
 var username = players[socket.id].username;
 if (('undefined' === typeof username) || !username) {
@@ -427,29 +429,16 @@ if (!roomObject.sockets.hasOwnProperty(requested_user)) {
 });
 	return;
 }
+var game_id = Math.floor(1+Math.random() * 0x1000.toString(16).substring());
 
-
-	var message = payload.message;
-	if (('undefined' === typeof message) || !message) {
-	var error_message = 'send_message didn\'t specify a username, command aborted';
-	log(error_message);
-
-socket.emit('send_message_response', {
-	result: 'fail',
-	message: error_message
-});
-		return;
-}
-
-	var success_data = {
-	result: 'Success',
-	username: username,
-	message: message
+var success_data = {
+		result: 'success',
+		socket_id: requested_user,
+		game_id: game_id
 };
+socket.emit('game_start_response', success_data);
 
-io.sockets.in(room).emit('send_message_response', success_data);
-	log('Message sent to room ' + room + ' by ' + username);
-		});
+
 
 /* Invite Command */
 /* Payload:
