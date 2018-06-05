@@ -48,7 +48,7 @@ if (payload.socket_id === socket.id) {
 var dom_element = $('.socket_'+payload.socket_id);
 
 /* If we don't already have an entry for this person */
-if (dom_element.length == 0) {
+if (dom_elements.length == 0){
 	var nodeA = $('<div></div>');
 	nodeA.addClass('socket_'+payload.socket_id);
 
@@ -89,7 +89,7 @@ else{
 var newHTML = '<p>'+payload.username+' just entered the lobby</p>';
 var newNode = $(newHTML);
  	newNode.hide();
- 	$('#messages').append(newNode);
+ 	$('#messages').prepend(newNode);
  	newNode.slideDown(1000);
 });
 
@@ -107,7 +107,7 @@ if (payload.socket_id === socket.id) {
 }
 
 /* If someone left the room then animate out all of their content */
-var dom_element = $('.socket_'+payload.socket_id);
+var dom_elements = $('.socket_'+payload.socket_id);
 
 /* If something exists */
 if (dom_elements.length  != 0){
@@ -225,7 +225,7 @@ function makeInviteButton(socket_id) {
 	var newNode = $(newHTML);
 	newNode.click(function(){
 		invite(socket_id);
-	});
+});
 	return(newNode);
 }
 
@@ -234,7 +234,7 @@ function makeInvitedButton(socket_id) {
 	var newNode = $(newHTML);
 	newNode.click(function(){
 		uninvite(socket_id);
-	});
+});
 	return(newNode);
 }
 
@@ -243,7 +243,7 @@ function makePlayButton(socket_id) {
 	var newNode = $(newHTML);
 	newNode.click(function(){
 		game_start(socket_id);
-	});
+});
 	return(newNode);
 }
 
