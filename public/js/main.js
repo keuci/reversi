@@ -22,7 +22,7 @@ if ('undefined' == typeof username || !username){
 
 var chat_room = getURLParameters('game_id');
 if ('undefined' == typeof chat_room || !chat_room){
-chat_room='lobby';
+chat_room ='lobby';
 }
 
 /* Connect to the socket server */
@@ -285,7 +285,6 @@ var old_board = [
 	];
 
 var my_color = ' ';
-var interval_timer;
 
 socket.on('game_update', function(payload){
 
@@ -323,26 +322,6 @@ else{
 }
 
 $('#my_color').html('<h3 id="my_color">I am '+my_color+'</h3>');
-$('#my_color').append('<h4>It is '+payload.game.whose_turn+'\'s turn Elapased time <span id="elapsed"></span></h4>');
-clearInterval(interval_timer);	interval_timer=setInterval(function(last_time){
-		return function() {
-
-/* Update the UI  */
-
-var d = new Date();
-var elapsedmilli = d.getTime()-last_time;
-var minutes = Math.floor(elapsedmilli / (60 * 1000));
-var seconds = Math.floor((elapsedmilli % (60 * 1000))/1000);
-
-if(seconds <10){
-$('#elapsed').html(minutes+ ' :0'+seconds);
-}
-else {
-$('#elapsed').html(minutes+ ' : '+seconds);
-}
-
-}} (payload.game.last_move_time)
-, 1000);
 
 
 /* Animate changes to the board */
@@ -400,39 +379,36 @@ else if(old_board[row][column]== 'b' && board[row][column] == 'w'){
 else {
 	$('#'+row+'_'+column).html('<img src="assets/images/error.gif" alt="error square" />');
 }
-}
 
 /* Set up interactivity */
-
 $('#'+row+'_'+column).off('click');
-$('#'+row+'_'+column).removeClass('hovered_over');
-	if (payload.game.whose_turn === my_color)	{
-	if(payload.game.legal_moves[row][column]=== my_color.substr(0,1)){
-		$('#'+row+'_'+column).addClass('hovered_over');
-		$('#'+row+'_'+column).click(function(r,c){
-		return function(){
-		var payload = {};
-		payload.row = r;
-		payload.column = c;
-		payload.color = my_color;
-		console.log('*** Client Log Message: \'play_token\' payload: '+JSON.stringify(payload));
-		socket.emit('play_token',payload);
+if (board[row][column] === ' '){
+	$('#'+row+'_'+column).addClass('hovered_over');
+	$('#'+row+'_'+column).click(function(r,c){
+	return function(){
+	var payload = {};
+			payload.row = r;
+			payload.column = c;
+			payload.color = my_color;
+			console.log('*** Client Log Message: \'Play_token\' payload: '+JSON.stringify(payload));
+			socket.emit('play_token', payload);
 };
 }(row,column));
 }
+else {
+$('#'+row+'_'+column).removeClass('hovered_over');
 }
 }
 }
-$('#blacksum').html(blacksum);
-$('#whitesum').html(whitesum);
+}
+	$('#blacksum').html(blacksum);
+	$('#whitesum').html(whitesum);
 
-old_board = board;
+	old_board = board;
 });
 
-
 socket.on('play_token_response', function(payload){
-
-console.log('*** Client Log Message: \'play_token_response\'\n\tpayload: '+JSON.stringify(payload));
+	console.log('*** Client Log Message: \'play_token_response\'\n\tpayload: '+JSON.stringify(payload));
 
 /* Check for a good play_token_response */
 if (payload.result == 'fail'){
