@@ -77,6 +77,8 @@ io.sockets.on('connection', function (socket) {
 	}
 	*/
 
+/* Join Room Command */
+
 	socket.on('join_room', function(payload){
 		log('\'join_room\' command'+JSON.stringify(payload));
 
@@ -156,7 +158,6 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 
-	/* Tells the person who is joining who else is in the room */
 	socket.on('disconnect', function(){
 		log('Client disconnected ' +JSON.stringify(players[socket.id]));
 				if('undefined' !== typeof players[socket.id] && players[socket.id]){
@@ -241,7 +242,7 @@ var success_data = 	{
 								message: message
 							};
 		io.in(room).emit('send_message_response', success_data);
-		log('Message sent to room ' + room + ' by ' + username+ 'success_data' +JSON.stringify(success_data));
+		log('Message sent to room ' + room + ' by ' + username);
 	});
 
 
@@ -309,8 +310,9 @@ var requested_user = payload.requested_user;
 		}
 
 var room = players[socket.id].room;
-		var roomObject = io.sockets.adapter.rooms[room];
-		/* Make sure the user being invited is in the room */
+var roomObject = io.sockets.adapter.rooms[room];
+
+/* Make sure the user being invited is in the room */
 		if(!roomObject.sockets.hasOwnProperty(requested_user)){
 			var error_message = 'invite requested a user that wasn\'t in the room, command aborted';
 			log(error_message);
@@ -547,7 +549,7 @@ socket.on('play_token', function(payload) {
 
 /* Check to make sure that a payload was sent */
 if(('undefined' === typeof payload) || !payload){
-		   var error_message = 'play_token had no payload, command aborted';
+		  var error_message = 'play_token had no payload, command aborted';
 			log(error_message);
 			socket.emit('play_token_response', {
 			result:'fail',
@@ -556,12 +558,12 @@ if(('undefined' === typeof payload) || !payload){
 			return;
 		}
 
-/* Check that the player has previously registered */
-		var player = players[socket.id];
-		if (('undefined' === typeof player) || !player) {
-			var error_message = 'server doesn\'t recognize you (try going back one screen)';
-			log(error_message);
-			socket.emit('play_token_response', {
+/* Check that player has previously registered */
+var player = players[socket.id];
+if (('undefined' === typeof player) || !player) {
+	var error_message = 'server doesn\'t recognize you (try going back one screen)';
+	log(error_message);
+	socket.emit('play_token_response', {
 
 result: 'fail',
 message: error_message
@@ -731,16 +733,16 @@ function create_new_game(){
 * anywhere further by adding dr and dc to (r,c) */
 
 function check_line_match(who,dr,dc,r,c,board){
-	if(board[r][c]=== who){
+	if (board[r][c] === who) {
 		return true;
 	}
-	if(board[r][c]=== ' '){
+	if (board[r][c] === ' ') {
 		return false;
 	}
-	if ((r+dr < 0) || (r+dr > 7 )){
+	if ( (r+dr < 0) || (r+dr>7) ) {
 		return false;
 	}
-	if ((c+dc < 0) || (c+dc > 7 )){
+	if ( (c+dc < 0) || (c+dc>7) ) {
 		return false;
 	}
 	return check_line_match(who,dr,dc,r+dr,c+dc,board);
@@ -750,97 +752,94 @@ function check_line_match(who,dr,dc,r,c,board){
 *and if the line indicated by adding dr to r and dc to c eventually ends in
 * the who color */
 
-function valid_move(who,dr,dc,r,c,board){
+function valid_move(who, dr, dc, r, c, board){
 	var other;
-	if( who === 'b'){
+	if (who === 'b') {
 		other = 'w';
 	}
-
-	else if(who === 'w'){
-		other ='b';
+	else if (who === 'w'){
+		other = 'b';
 	}
-	else{
-		log ('Houston we have a color problem: '+who);
+	else {
+		log('Houston we have a color problem: ' +who);
 		return false;
 	}
-	if ((r+dr < 0) || (r+dr > 7 )){
+	if ( (r+dr<0) || (r+dr>7) ) {
 		return false;
 	}
-	if ((c+dc < 0) || (c+dc > 7 )){
+	if ( (c+dc<0) || (c+dc>7) ) {
 		return false;
 	}
-	if(board[r+dr][c+dc] != other){
+	if (board[r+dr][c+dc] !== other) {
 		return false;
 	}
-	if ((r+dr+dr < 0) || (r+dr+dr > 7 )){
+	if ( (r+dr+dr<0) || (r+dr+dr>7) ) {
 		return false;
 	}
-	if ((c+dc+dc < 0) || (c+dc+dc > 7 )){
+	if ( (c+dc+dc<0) || (c+dc+dc>7) ) {
 		return false;
 	}
 	return check_line_match(who,dr,dc,r+dr+dr,c+dc+dc,board);
 }
 
 function calculate_valid_moves(who,board){
-	var valid= [
-		[' ',' ',' ',' ',' ',' ',' ',' '],
-		[' ',' ',' ',' ',' ',' ',' ',' '],
-		[' ',' ',' ',' ',' ',' ',' ',' '],
-		[' ',' ',' ',' ',' ',' ',' ',' '],
-		[' ',' ',' ',' ',' ',' ',' ',' '],
-		[' ',' ',' ',' ',' ',' ',' ',' '],
-		[' ',' ',' ',' ',' ',' ',' ',' '],
-		[' ',' ',' ',' ',' ',' ',' ',' ']
+	var valid = [
+		[' ',' ',' ',' ',' ',' ',' ',' ',],
+		[' ',' ',' ',' ',' ',' ',' ',' ',],
+		[' ',' ',' ',' ',' ',' ',' ',' ',],
+		[' ',' ',' ',' ',' ',' ',' ',' ',],
+		[' ',' ',' ',' ',' ',' ',' ',' ',],
+		[' ',' ',' ',' ',' ',' ',' ',' ',],
+		[' ',' ',' ',' ',' ',' ',' ',' ',],
+		[' ',' ',' ',' ',' ',' ',' ',' ',]
+	];
 
-		];
+	for (var row=0; row<8; row++){
+		for(var column=0; column<8; column++) {
+			if (board[row][column] === ' ') {
+				nw = valid_move(who,-1,-1,row,column,board);
+				nn = valid_move(who,-1, 0,row,column,board);
+				ne = valid_move(who,-1, 1,row,column,board);
 
-	for(var row = 0; row<8; row++ ){
-		for (var column =0; column<8; column++){
-	if(board[row][column] === ' '){
+				ww = valid_move(who, 0,-1,row,column,board);
+				ee = valid_move(who, 0, 1,row,column,board);
 
-		nw = valid_move(who,-1,-1,row,column,board);
-		nn = valid_move(who,-1, 0,row,column,board);
-		ne = valid_move(who,-1, 1,row,column,board);
+				sw = valid_move(who, 1,-1,row,column,board);
+				ss = valid_move(who, 1, 0,row,column,board);
+				se = valid_move(who, 1, 1,row,column,board);
 
-		ww = valid_move(who, 0, -1,row,column,board);
-		ee = valid_move(who, 0,  1,row,column,board);
-
-		sw = valid_move(who, 1,-1,row,column,board);
-		ss = valid_move(who, 1, 0,row,column,board);
-		se = valid_move(who, 1, 1,row,column,board);
-
-		if (nw || nn || ne || ww || ee || sw || ss || se){
-			valid[row][column] = who;
-				}
-			}
-		}
-	}
+				if (nw || nn || ne || ww || ee || sw || ss || se) {
+					valid[row][column] = who;
+}
+}
+}
+}
 	return valid;
 }
 
 function flip_line(who,dr,dc,r,c,board){
 
-	if ((r+dr < 0) || (r+dr > 7 )){
-		return false;
-	}
-	if ((c+dc < 0) || (c+dc > 7 )){
-		return false;
-	}
-	if(board[r+dr][c+dc] === ' '){
-		return false;
-	}
-	if(board[r+dr][c+dc] === who){
-		return true;
-	}
-	else{
-		if(flip_line(who,dr,dc,r+dr,c+dc,board)){
-			board[r+dr][c+dc]= who;
-			return true;
-		}
-		else{
+	if ( (r+dr<0) || (r+dr>7) ) {
 			return false;
 		}
-	}
+		if ( (c+dc<0) || (c+dc>7) ) {
+			return false;
+		}
+		if (board[r+dr][c+dc] === ' ') {
+			return false;
+		}
+		if (board[r+dr][c+dc] === who) {
+			return true;
+		}
+		else {
+			if (flip_line(who,dr,dc,r+dr,c+dc,board)){ // if we return with a valid move
+				board[r+dr][c+dc] = who;
+				return true;
+			}
+			else { // if we don't return with a valid move
+				return false;
+}
+}
 }
 
 function flip_board (who,row,column,board){
@@ -854,8 +853,6 @@ function flip_board (who,row,column,board){
 	flip_line(who, 1,-1,row,column,board);
 	flip_line(who, 1, 0,row,column,board);
 	flip_line(who, 1, 1,row,column,board);
-
-
 }
 
 function send_game_update(socket, game_id, message){
@@ -907,7 +904,7 @@ if((games[game_id].player_black.socket != '') && (games[game_id].player_white.so
 		games[game_id].player_white.username = '';
 		games[game_id].player_black.socket = '';
 		games[game_id].player_black.username = '';
-	}
+}
 }
 
 /* Assign colors to the players if not already done */
@@ -916,14 +913,14 @@ if(games[game_id].player_white.socket == ''){
 	if(games[game_id].player_black.socket != socket.id){
 		games[game_id].player_white.socket = socket.id;
 		games[game_id].player_white.username = players[socket.id].username;
-	}
+}
 }
 	if(games[game_id].player_black.socket == ''){
 	if(games[game_id].player_white.socket != socket.id){
 		games[game_id].player_black.socket = socket.id;
 		games[game_id].player_black.username = players[socket.id].username;
 
-	}
+}
 }
 
 /* Send game update */
@@ -951,8 +948,8 @@ var white = 0;
 }
 				if(games[game_id].board[row][column] === 'w'){
 				white++;
-		}
-	}
+}
+}
 }
 	if(count == 0) {
 /* Send a game over message */
@@ -972,10 +969,10 @@ var winner = 'tie game';
 		io.in(game_id).emit('game_over', success_data);
 
 /* Delete old games after 1 hour */
-		setTimeout(function(id){
-			return function(){
-				delete games[id];
-			}}(game_id)
-			,60*60*1000);
-	}
+setTimeout(function(id){
+return function(){
+delete games[id];
+}
+}(game_id),60*60*1000);
+}
 }
