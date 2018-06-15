@@ -30,6 +30,8 @@ h1,h2,h3,h4,p {
 	margin: 0px;
 }
 
-.hovered_over:hover {
-    background-image: url("../Assets/Images/hover.gif"); background-size: 100% 100%; background-color: transparent;
+td.hovered_over:hover  {
+    background-image: url("../Images/hover.gif");
+	background-size: 100% 100%;
 }
+
