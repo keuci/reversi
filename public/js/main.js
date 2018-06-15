@@ -381,34 +381,34 @@ if (old_board[row][column] !== board[row][column]){
 console.log('*** Board Space Has Changed : '+JSON.stringify(old_board[row][column]+'!=='+board[row][column]));
 
 if (old_board[row][column] === '?' && board[row][column] === ' ') {
-	$('#'+row+'_'+column).html('<img src="assets/images/empty.gif" alt="empty square"/>');
+	$('#'+row+'_'+column).html('<img src="Assets/Images/empty.gif" alt="empty square"/>');
 }
 	else if (old_board[row][column] === '?' && board[row][column] === 'w') {
-	$('#'+row+'_'+column).html('<img src="assets/images/empty_to_cat.gif" alt="white square">');
+	$('#'+row+'_'+column).html('<img src="Assets/Images/empty_to_cat.gif" alt="white square">');
 }
 	else if (old_board[row][column] === '?' && board[row][column] === 'b'){
-	$('#'+row+'_'+column).html('<img src="assets/images/empty_to_dog.gif" alt="dog square">');
+	$('#'+row+'_'+column).html('<img src="Assets/Images/empty_to_dog.gif" alt="dog square">');
 }
 	else if (old_board[row][column] === ' ' && board[row][column] === 'w') {
-	$('#'+row+'_'+column).html('<img src="assets/images/empty_to_cat.gif" alt="empty square">');
+	$('#'+row+'_'+column).html('<img src="Assets/Images/empty_to_cat.gif" alt="empty square">');
 }
 	else if (old_board[row][column] === ' ' && board[row][column] === 'b'){
-	$('#'+row+'_'+column).html('<img src="assets/images/empty_to_dog.gif" alt="empty square">');
+	$('#'+row+'_'+column).html('<img src="Assets/Images/empty_to_dog.gif" alt="empty square">');
 }
 	else if (old_board[row][column] === 'w' && board[row][column] === ' ') {
-	$('#'+row+'_'+column).html('<img src="assets/images/cat_to_dog.gif" alt="dog square">');
+	$('#'+row+'_'+column).html('<img src="Assets/Images/cat_to_dog.gif" alt="dog square">');
 }
 	else if (old_board[row][column] === 'b' && board[row][column] === ' '){
-	$('#'+row+'_'+column).html('<img src="assets/images/dog_to_cat.gif" alt="cat square">');
+	$('#'+row+'_'+column).html('<img src="Assets/Images/dog_to_cat.gif" alt="cat square">');
 }
 	else if (old_board[row][column] === 'w' && board[row][column] === 'b') {
-	$('#'+row+'_'+column).html('<img src="assets/images/cat_to_dog.gif" alt="dog square">');
+	$('#'+row+'_'+column).html('<img src="Assets/Images/cat_to_dog.gif" alt="dog square">');
 }
 	else if (old_board[row][column] === 'b' && board[row][column] === 'w'){
-	$('#'+row+'_'+column).html('<img src="assets/images/dog_to_cat.gif" alt="cat square">');
+	$('#'+row+'_'+column).html('<img src="Assets/Images/dog_to_cat.gif" alt="cat square">');
 }
 	else {
-	$('#'+row+'_'+column).html('<img src="assets/images/error.gif" alt="error"/>');
+	$('#'+row+'_'+column).html('<img src="Assets/Images/error.gif" alt="error"/>');
 }
 }
 
