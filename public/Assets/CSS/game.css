@@ -31,5 +31,5 @@ h1,h2,h3,h4,p {
 }
 
 .hovered_over:hover {
-    background-image: url("../images/hover.gif"); background-size: 100% 100%; background-color: transparent;
+    background-image: url("../Images/hover.gif"); background-size: 100% 100%; background-color: transparent;
 }
